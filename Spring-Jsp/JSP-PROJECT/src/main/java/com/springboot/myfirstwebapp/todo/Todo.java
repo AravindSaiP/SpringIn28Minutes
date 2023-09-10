@@ -1,25 +1,38 @@
 package com.springboot.myfirstwebapp.todo;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
 import jakarta.validation.constraints.Size;
 
 import java.time.LocalDate;
 
+@Entity
 public class Todo {
 
+    @Id
+    @GeneratedValue
     private int id;
-    private String username;
+
+    @Column(name = "name")
+    private String name;
 
 
     @Size(min = 10,message = "Required minimum 10 characters")
     private String description;
-    private LocalDate date;
+    private LocalDate targetDate;
     private boolean done;
 
-    public Todo(int id, String username, String description, LocalDate date, boolean done) {
+    public Todo(){
+
+    }
+
+    public Todo(int id, String name, String description, LocalDate targetDate, boolean done) {
         this.id = id;
-        this.username = username;
+        this.name = name;
         this.description = description;
-        this.date = date;
+        this.targetDate = targetDate;
         this.done = done;
     }
 
@@ -31,12 +44,12 @@ public class Todo {
         this.id = id;
     }
 
-    public String getUsername() {
-        return username;
+    public String getName() {
+        return name;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getDescription() {
@@ -47,12 +60,12 @@ public class Todo {
         this.description = description;
     }
 
-    public LocalDate getDate() {
-        return date;
+    public LocalDate getTargetDate() {
+        return targetDate;
     }
 
-    public void setDate(LocalDate date) {
-        this.date = date;
+    public void setTargetDate(LocalDate targetDate) {
+        this.targetDate = targetDate;
     }
 
     public boolean isDone() {
@@ -68,9 +81,9 @@ public class Todo {
     public String toString() {
         return "Todo{" +
                 "id=" + id +
-                ", username='" + username + '\'' +
+                ", username='" + name + '\'' +
                 ", description='" + description + '\'' +
-                ", date=" + date +
+                ", date=" + targetDate +
                 ", done=" + done +
                 '}';
     }
