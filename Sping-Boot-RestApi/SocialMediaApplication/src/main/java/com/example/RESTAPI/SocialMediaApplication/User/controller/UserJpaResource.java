@@ -3,6 +3,7 @@ package com.example.RESTAPI.SocialMediaApplication.User.controller;
 import com.example.RESTAPI.SocialMediaApplication.User.entity.Post;
 import com.example.RESTAPI.SocialMediaApplication.User.entity.User;
 import com.example.RESTAPI.SocialMediaApplication.User.Exception.UserNotFoundException;
+import com.example.RESTAPI.SocialMediaApplication.User.repository.PostRepository;
 import com.example.RESTAPI.SocialMediaApplication.User.repository.UserRepository;
 import com.example.RESTAPI.SocialMediaApplication.User.service.UserDaoService;
 import jakarta.validation.Valid;
@@ -25,10 +26,13 @@ public class UserJpaResource {
 
     private UserRepository repository;
 
-    public UserJpaResource(UserDaoService service, MessageSource messageSource, UserRepository repository) {
+    private PostRepository postRepository;
+
+    public UserJpaResource(UserDaoService service, MessageSource messageSource, UserRepository repository, PostRepository postRepository) {
         this.service = service;
         this.messageSource = messageSource;
         this.repository = repository;
+        this.postRepository = postRepository;
     }
 
     //http://localhost:8080/jpa/users
@@ -74,7 +78,26 @@ public class UserJpaResource {
         if(user.isEmpty())
             throw new UserNotFoundException("id:"+id);
 
+
         return user.get().getPosts();
+
+    }
+
+    @PostMapping("/jpa/users/{id}/posts")
+    public ResponseEntity createPostForUser(@PathVariable int id, @Valid @RequestBody Post post){
+        Optional<User> user = repository.findById(id);
+        if(user.isEmpty())
+            throw new UserNotFoundException("id:"+id);
+        post.setUser(user.get());
+
+        Post savedPost = postRepository.save(post);
+
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest().build().toUri();
+
+
+        System.out.println("location = " + location);
+
+        return ResponseEntity.created(location).build();
 
     }
 
