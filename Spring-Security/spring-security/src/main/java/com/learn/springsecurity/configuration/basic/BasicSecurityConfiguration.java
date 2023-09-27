@@ -1,10 +1,11 @@
-package com.learn.springsecurity.configuration;
+package com.learn.springsecurity.configuration.basic;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.User;
@@ -18,14 +19,27 @@ import org.springframework.security.web.SecurityFilterChain;
 
 import javax.sql.DataSource;
 
-//@Configuration
+import static org.springframework.security.config.Customizer.withDefaults;
+
+@Configuration
+@EnableMethodSecurity(jsr250Enabled = true, securedEnabled = true)
 public class BasicSecurityConfiguration {
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests(auth -> auth.anyRequest().authenticated());
+        http.authorizeHttpRequests(auth -> {
+
+            auth
+                    /*********************************************************/
+                    //This is an example of Global security authorization
+                    //.requestMatchers("/users").hasAnyRole("USER") //Only users with role USER can access the URL /users
+                    //.requestMatchers("/admin/**").hasRole("ADMIN") //Only users with role ADMIN can access the URL /admins
+                    /************************************************************/
+
+                    .anyRequest().authenticated();
+        });
         http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-        http.httpBasic(Customizer.withDefaults());
+        http.httpBasic(withDefaults());
         http.csrf(csrf->csrf.disable());
         http.headers().frameOptions().sameOrigin();
         return http.build();
